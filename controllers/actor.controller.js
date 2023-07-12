@@ -1,8 +1,8 @@
-const Contact = require('../models/contact.model')
+const Actor = require('../models/contact.model')
 
 exports.findAll = (req, res) =>{
-    Contact.find().then(contacts => {
-        res.send(contacts)
+    Contact.find().then(actors => {
+        res.send(actors)
     }
     ).catch(err => {
         res.status(500).send({
@@ -13,38 +13,24 @@ exports.findAll = (req, res) =>{
 
 
 exports.create = (req, res) => {
-  if (!req.body.email) {
-    return res.status(400).send({
-      message: "Email cannot be empty"
-    });
-  }
   if (!req.body.name) {
     return res.status(400).send({
-      message: "Name cannot be empty"
+      message: "name cannot be empty"
     });
   }
-  if (!req.body.phone) {
+  if (!req.body.image) {
     return res.status(400).send({
-      message: "Phone cannot be empty"
+      message: "image cannot be empty"
     });
   }
-
-  const contact = new Contact({
-    email: req.body.email,
+  const actor = new Actor({
     name: req.body.name,
-    phone:  req.body.phone
+    image:  req.body.image
   });
 
   contact.save()
     .then(data=>res.send(data))
     .catch(error => {
-        let errorMessage = "An error occurred";
-        if (error.code === 11000) {
-          const field = Object.keys(error.keyValue)[0];
-          if (field === "email") {
-            errorMessage = "Email already exists. Please choose a different email.";
-          } 
-        }
         res.status(500).send({
             message:"someting went wrong while inserting data"
         })
@@ -52,14 +38,14 @@ exports.create = (req, res) => {
 };
 
 exports.findById = (req, res) => {
-    const contactId = req.params.id;
+    const actorId = req.params.id;
   
-    Contact.findById(contactId)
-      .then(contact => {
-        if (!contact) {
+    Contact.findById(actorId)
+      .then(actor => {
+        if (!actor) {
           res.status(404).json({ message: 'Contact not found' });
         } else {
-          res.json(contact);
+          res.json(actor);
         }
       })
       .catch(err => {
@@ -68,11 +54,11 @@ exports.findById = (req, res) => {
   };
 
 exports.findOne = (req, res) => {
-    const email = req.body.email;
+    const name = req.body.name;
 
-    Contact.findOne({ email: email })
-    .then(contact => {
-        if(!contact){
+    Contact.findOne({ name: name })
+    .then(actor => {
+        if(!actor){
             res.status(400).send(
                 {
                     'message' : 'Contact not available', 
@@ -80,7 +66,7 @@ exports.findOne = (req, res) => {
                 }
             )
         }
-        res.send(contact)
+        res.send(actor)
     }
     ).catch(err => {
         res.status(500).send({
@@ -90,29 +76,23 @@ exports.findOne = (req, res) => {
 }
 
 exports.update = (req,res) =>{
-    if (!req.body.email){
-        return res.status(400).send({
-            message:"email can not be empty"
-        })
-    }
     if (!req.body.name){
         return res.status(400).send({
             message:"name can not be empty"
         })
     }
-    if (!req.body.phone){
+    if (!req.body.image){
         return res.status(400).send({
-            message:"phone can not be empty"
+            message:"image can not be empty"
         })
     }
     const id =req.params.id;
 
-    Contact.findByIdAndUpdate(id, {
-        email : req.body.email,
+    Actor.findByIdAndUpdate(id, {
         name: req.body.name,
-        phone: req.body.phone
-    },{new:true}).then(contact =>{
-        res.send(contact)
+        image: req.body.image
+    },{new:true}).then(actor =>{
+        res.send(actor)
     }).catch(err => {
         res.status(500).send({
             'message' : 'Something went wrong!!', 'error' : err
@@ -122,7 +102,7 @@ exports.update = (req,res) =>{
 
 exports.delete = (req,res) =>{
     const id =req.params.id;
-    Contact.findByIdAndRemove(id).then(contact =>{
+    Actor.findByIdAndRemove(id).then(actor =>{
         res.send({
             'message':'Removed!!'
         })
