@@ -1,3 +1,3 @@
 module.exports = {
-    url:'mongodb+srv://nicolasfelipedelgado:aFmQQNjlgcwTEoal@portfolio.hoeugel.mongodb.net/?retryWrites=true&w=majority' 
+    url:'mongodb://cineramaUser:SLmimlVHUFIWVGwioahviluwavbdlfjbvgiuwehflwe@svc.obaa.cloud:7017/cineramaDb?authMechanism=DEFAULT&authSource=admin' 
 }

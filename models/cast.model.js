@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
 const CastSchema = mongoose.Schema({
-    actorId : String,
+    actor: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Actor', 
+      },
     gender : String,
     character : String
 },

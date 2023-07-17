@@ -30,6 +30,10 @@ app.get('/', (req, res)=>{
     })
 })
 require('./routes/user.route')(app);
+require('./routes/actor.route')(app);
+require('./routes/cast.route')(app);
+require('./routes/credit.route')(app);
+require('./routes/tags.route')(app);
 
 app.listen(4000, () =>{
     console.log('Server is up');
