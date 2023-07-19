@@ -1,9 +1,9 @@
 module.exports = (app)=>{
-    const actor = require('../controllers/actor.controller');
+    const movie = require('../controllers/movie.controller');
   
-    app.post('/actors', actor.create);
-    app.get('/actors', actor.findAll);
-    app.get('/actors/:id', actor.findById);
-    app.put('/actors/:id', actor.update);
-    app.delete('/actors/:id', actor.delete);
+    app.post('/movies', movie.create);
+    app.get('/movies', movie.findAll);
+    app.get('/movies/:id', movie.findById);
+    app.put('/movies/:id', movie.update);
+    app.delete('/movies/:id', movie.delete);
   }
