@@ -1,12 +1,26 @@
 const mongoose = require('mongoose');
 
-const ActorSchema = mongoose.Schema({
-    name : String,
+const ActorSchema = new mongoose.Schema({ 
+    name: String,
     gender: String,
-    image : Number,
+    image: String,
 },
-{
-    timestamps:true
-}
+{   collection: 'actor',}
 );
-module.exports = mongoose.model('Actor', ActorSchema);
+
+// const ActorSchema = mongoose.Schema({
+//     name : String,
+//     image : Number,
+// },
+// {
+//     timestamps:true
+// }
+// );
+
+const Actor = mongoose.model('Actor', ActorSchema);
+
+module.exports = Actor;
+// module.exports = mongoose.model('Actor', ActorSchema);
+
+// exports.ActorSchema = ActorSchema;
+// exports.Punishment = mongoose.model("Punishment", punishmentSchema);

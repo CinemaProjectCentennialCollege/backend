@@ -1,13 +1,21 @@
 const Actor = require('../models/actor.model')
 
-exports.findAll = async (req, res) => {
-    try {
-      const actors = await Actor.find();
-      res.json(actors);
-    } catch (error) {
-      res.status(500).json({ error: 'Internal server error' });
-    }
-  };
+exports.findAll = (req, res) =>{
+  const pageOptions = {
+      page: parseInt(req.query.page, 10) || 0,
+      limit: parseInt(req.query.limit, 10) || 20
+  }
+  Actor.find().skip(pageOptions.page * pageOptions.limit)
+  .limit(pageOptions.limit)
+  .then(actors => {
+      res.send(actors)
+  })
+  .catch(err => {
+      res.status(500).send({
+          'message' : 'Something went wrong!!', 'error' : err
+      })
+  })
+}
 
 
 exports.create = async (req, res) => {

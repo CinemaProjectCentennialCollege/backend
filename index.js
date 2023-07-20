@@ -33,7 +33,7 @@ require('./routes/user.route')(app);
 require('./routes/actor.route')(app);
 require('./routes/movie.route')(app);
 require('./routes/cast.route')(app);
-require('./routes/credit.route')(app);
+require('./routes/crew.route.js')(app);
 require('./routes/tags.route')(app);
 
 app.listen(4000, () =>{

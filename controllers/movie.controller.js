@@ -1,21 +1,26 @@
 const Movie = require('../models/movie.model')
 
-exports.findAll = (req, res) =>{
+exports.findAll = (req, res) => {
     const pageOptions = {
-        page: parseInt(req.query.page, 10) || 0,
-        limit: parseInt(req.query.limit, 10) || 20
-    }
-    Movie.find().skip(pageOptions.page * pageOptions.limit)
-    .limit(pageOptions.limit)
-    .then(movies => {
-        res.send(movies)
-    })
-    .catch(err => {
+      page: parseInt(req.query.page, 10) || 0,
+      limit: parseInt(req.query.limit, 10) || 20,
+    };
+  
+    Movie.find()
+      .skip(pageOptions.page * pageOptions.limit)
+      .limit(pageOptions.limit)
+      .select('title vote_average genres')
+      .then((movies) => {
+        res.send(movies);
+      })
+      .catch((err) => {
         res.status(500).send({
-            'message' : 'Something went wrong!!', 'error' : err
-        })
-    })
-}
+          message: 'Something went wrong!!',
+          error: err,
+        });
+      });
+  };
+  
 
 
 exports.create = (req, res) => {

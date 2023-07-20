@@ -1,16 +1,16 @@
-// import ActorSchema from "actor.model.js";
-
-const { ActorSchema } = require('./actor.model');
-
 const mongoose = require('mongoose');
 
 const CastSchema = mongoose.Schema({
-    actor: ActorSchema,
+    actor: {
+        name: String,
+        gender: String,
+        image: String,
+      },
     gender : String,
     character : String
 },
 {
-    timestamps:true
+    collection: 'cast',
 }
 );
 module.exports = mongoose.model('Cast', CastSchema);
