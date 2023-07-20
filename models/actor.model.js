@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const ActorSchema = mongoose.Schema({
     name : String,
+    gender: String,
     image : Number,
 },
 {
