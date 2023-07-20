@@ -1,10 +1,16 @@
-const Actor = require('../models/actor.model')
+const Movie = require('../models/movie.model')
 
 exports.findAll = (req, res) =>{
-    Actor.find().then(actors => {
-        res.send(actors)
+    const pageOptions = {
+        page: parseInt(req.query.page, 10) || 0,
+        limit: parseInt(req.query.limit, 10) || 20
     }
-    ).catch(err => {
+    Movie.find().skip(pageOptions.page * pageOptions.limit)
+    .limit(pageOptions.limit)
+    .then(movies => {
+        res.send(movies)
+    })
+    .catch(err => {
         res.status(500).send({
             'message' : 'Something went wrong!!', 'error' : err
         })
@@ -23,12 +29,12 @@ exports.create = (req, res) => {
       message: "image cannot be empty"
     });
   }
-  const actor = new Actor({
+  const movie = new Movie({
     name: req.body.name,
     image:  req.body.image
   });
 
-  actor.save()
+  movie.save()
     .then(data=>res.send(data))
     .catch(error => {
         res.status(500).send({
@@ -38,14 +44,14 @@ exports.create = (req, res) => {
 };
 
 exports.findById = (req, res) => {
-    const actorId = req.params.id;
+    const movieId = req.params.id;
   
-    Actor.findById(actorId)
-      .then(actor => {
-        if (!actor) {
-          res.status(404).json({ message: 'Actor not found' });
+    Movie.findById(movieId)
+      .then(movie => {
+        if (!movie) {
+          res.status(404).json({ message: 'Movie not found' });
         } else {
-          res.json(actor);
+          res.json(movie);
         }
       })
       .catch(err => {
@@ -56,17 +62,17 @@ exports.findById = (req, res) => {
 exports.findOne = (req, res) => {
     const name = req.body.name;
 
-    Actor.findOne({ name: name })
-    .then(actor => {
-        if(!actor){
+    Movie.findOne({ name: name })
+    .then(movie => {
+        if(!movie){
             res.status(400).send(
                 {
-                    'message' : 'Actor not available', 
+                    'message' : 'Movie not available', 
                     'error' : err
                 }
             )
         }
-        res.send(actor)
+        res.send(movie)
     }
     ).catch(err => {
         res.status(500).send({
@@ -88,11 +94,11 @@ exports.update = (req,res) =>{
     }
     const id =req.params.id;
 
-    Actor.findByIdAndUpdate(id, {
+    Movie.findByIdAndUpdate(id, {
         name: req.body.name,
         image: req.body.image
-    },{new:true}).then(actor =>{
-        res.send(actor)
+    },{new:true}).then(movie =>{
+        res.send(movie)
     }).catch(err => {
         res.status(500).send({
             'message' : 'Something went wrong!!', 'error' : err
@@ -102,7 +108,7 @@ exports.update = (req,res) =>{
 
 exports.delete = (req,res) =>{
     const id =req.params.id;
-    Actor.findByIdAndRemove(id).then(actor =>{
+    Movie.findByIdAndRemove(id).then(movie =>{
         res.send({
             'message':'Removed!!'
         })
