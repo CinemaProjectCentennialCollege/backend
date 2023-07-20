@@ -52,6 +52,7 @@ exports.findById = (req, res) => {
     const movieId = req.params.id;
   
     Movie.findById(movieId)
+      .select('title vote_average genres')
       .then(movie => {
         if (!movie) {
           res.status(404).json({ message: 'Movie not found' });
