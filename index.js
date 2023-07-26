@@ -1,11 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const logger = require('morgan');
+const cors = require('cors')
 const app = express();
 app.use(bodyParser.urlencoded({
     extended:true
 }))
-
 app.use(bodyParser.json())
+app.use(cors())
+app.use(logger('dev'));
+app.use(express.json());
+
 const dbConfig = require('./config/database.config.js');
 const mongoose = require('mongoose');
 
