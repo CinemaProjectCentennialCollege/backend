@@ -41,6 +41,6 @@ require('./routes/cast.route')(app);
 require('./routes/crew.route.js')(app);
 require('./routes/tags.route')(app);
 
-app.listen(4000, "api.cinerama.local", () =>{
+app.listen(4000, () =>{
     console.log('Server is up');
 })
