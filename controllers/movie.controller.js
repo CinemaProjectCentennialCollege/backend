@@ -32,12 +32,12 @@ exports.findPopular = (req, res) => {
       $project: {
         tmdb_id: 1,
         title: 1,
+        slug: 1,
         overview: 1,
         poster_path: 1,
         adult: 1,
         vote_average: 1,
         vote_count: { $toInt: "$vote_count" },
-        // vote_count: 1,
         genres: 1,
         original_language: 1,
       },
