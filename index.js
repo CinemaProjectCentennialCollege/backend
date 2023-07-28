@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const logger = require('morgan');
 const cors = require('cors')
 const app = express();
+const session = require('express-session');
+const requireLogin = require('./public/session_manager');
 app.use(bodyParser.urlencoded({
     extended:true
 }))
@@ -10,6 +12,12 @@ app.use(bodyParser.json())
 app.use(cors())
 app.use(logger('dev'));
 app.use(express.json());
+
+app.use(session({
+    secret: 'cinerama',
+    resave: false,
+    saveUninitialized: false
+  }));
 
 const dbConfig = require('./config/database.config.js');
 const mongoose = require('mongoose');

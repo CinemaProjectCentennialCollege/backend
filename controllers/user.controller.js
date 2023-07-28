@@ -53,51 +53,47 @@ exports.create = (req, res) => {
 };
 
 
-exports.findOne = (req, res) => {
-  
-    const username = req.body.username;
-    const password = req.body.password;
-  
-    User.findOne({ userName: username })
-      .then(user => {
-        if (!user) {
-          res.send(`
-            <script>
-              alert('The user does not exist. Try again.');
-              window.location.href = '/login';
-            </script>
-          `);
-        } else {
-          // Compare the password with the encrypted password stored in the database
-          bcrypt.compare(password, user.password, (err, result) => {
-            if (err) {
-              res.status(500).json({
-                message: 'Something went wrong',
-                error: err,
-              });
-            } else if (result) {
-              // Passwords match
-              req.session.user = { username: username};
-              res.redirect('/business');
-            } else {
-              // Passwords don't match
-              res.send(`
-                <script>
-                  alert('Wrong password, try again.');
-                  window.location.href = '/login';
-                </script>
-              `);
-            }
-          });
-        }
-      })
-      .catch(err => {
-        res.status(500).json({
-          message: 'Something went wrong',
-          error: err,
-        });
-      });
-  };
+exports.findOne = async (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+  try {
+    const user = await User.findOne({ userName: username });
+    console.log('User:', user);
+    if (!user) {
+      return res.send(`
+        <script>
+          alert('The user does not exist. Try again.');
+          window.location.href = '/login';
+        </script>
+      `);
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (passwordMatch) {
+      req.session.user = { username: username };
+      return res.send(`
+        <script>
+          alert('Login successful.');
+          window.location.href = '/dashboard';
+        </script>
+      `);
+    } else {
+      return res.send(`
+        <script>
+          alert('Wrong password, try again.');
+          window.location.href = '/login';
+        </script>
+      `);
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      message: 'Something went wrong',
+      error: err,
+    });
+  }
+};
+
   
 
 exports.findAll = (req, res) =>{
