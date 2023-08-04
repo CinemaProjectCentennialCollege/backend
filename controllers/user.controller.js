@@ -3,51 +3,52 @@ const User = require('../models/user.model')
 const bcrypt = require('bcrypt');
 
 exports.register = async (req, res) => {
-  if (!req.body.firstName) {
+  const firstName = req.body.firstName
+  const lastName = req.body.lastName
+  const email = req.body.email
+  const userName = req.body.userName
+  const password = req.body.password
+
+  if (!firstName) {
     return res.status(400).send({
       message: "First name cannot be empty"
     });
   }
-  if (!req.body.lastName) {
+  if (!lastName) {
     return res.status(400).send({
       message: "Last name name cannot be empty"
     });
   }
-  if (!req.body.email) {
+  if (!email) {
     return res.status(400).send({
       message: "Email cannot be empty"
     });
   }
-  if (!req.body.userName) {
+  if (!userName) {
     return res.status(400).send({
       message: "User name cannot be empty"
     });
   }
   
-  if (!req.body.password) {
+  if (!password) {
     return res.status(400).send({
       message: "Password cannot be empty"
     });
   }
 
   const user = new User({
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    userName: req.body.userName,
-    password:  bcrypt.hashSync(req.body.password, 10)
+    firstName: firstName,
+    lastName: lastName,
+    email: email,
+    userName: userName,
+    password:  bcrypt.hashSync(password, 10)
   });
 
   await user.save()
     .then(() => {
-      console.log('Userr:', user);
-      console.log("email: ", email)
-      console.log("password: ", password)
-      
       const authToken = generateAccessToken(email)
-
-      res.send({
-        message: errorMessage,
+      return res.send({
+        message: "Registration successful",
         user: user,
         token: authToken
       });
