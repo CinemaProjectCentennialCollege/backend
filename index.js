@@ -48,6 +48,7 @@ require('./routes/movie.route')(app);
 require('./routes/cast.route')(app);
 require('./routes/crew.route.js')(app);
 require('./routes/tags.route')(app);
+require('./routes/booking.route')(app);
 
 app.listen(4000, () =>{
     console.log('Server is up');
