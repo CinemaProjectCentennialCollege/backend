@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const Movie = require('../models/movie.model')
 
 exports.findAll = (req, res) => {
@@ -70,7 +72,6 @@ exports.findPopular = (req, res) => {
 };
   
 
-
 exports.create = (req, res) => {
   if (!req.body.name) {
     return res.status(400).send({
@@ -94,6 +95,63 @@ exports.create = (req, res) => {
             message:"someting went wrong while inserting data"
         })
     });
+};
+
+
+// Function to fetch a single movie object by _id or slug
+exports.getMovieByIdOrSlug = (req, res) => {
+  const movieId = req.params.id;
+  const movieSlug = req.params.slug;
+
+  let query = {}
+  // Check if the identifier is a valid ObjectId (i.e., _id field)
+  if (mongoose.isValidObjectId(movieId)) {
+    // Find by _id
+    query["_id"] = movieId;
+  } else {
+    // Find by slug
+    query["slug"] = movieSlug;
+  }
+
+  Movie.aggregate([
+    {
+      $match: query // Filter by the given tmdbId
+    },
+    {
+      $lookup: {
+        from: 'cast', // Name of the casts collection
+        localField: 'tmdb_id',
+        foreignField: 'tmdbId',
+        as: 'casts'
+      }
+    },
+    // {
+    //   $project: {
+    //     _id: 1,
+    //     tmdb_id: 1,
+    //     title: 1,
+    //     slug: 1,
+    //     overview: 1,
+    //     poster_path: 1,
+    //     casts: 1,
+    //     adult: 1,
+    //     vote_average: 1,
+    //     vote_count: { $toInt: "$vote_count" },
+    //     genres: 1,
+    //     original_language: 1,
+    //   }
+    // }
+  ]).then(movie => {
+    if (!movie) {
+      res.status(404).json({ message: 'Movie not found' });
+    } else {
+      res.json(movie[0]);
+    }
+  })
+  .catch(err => {
+    res.status(500).json({ message: 'Something went wrong', error: err });
+  });
+
 };
 
 exports.findById = (req, res) => {
@@ -132,9 +190,9 @@ exports.findBySlug = (req, res) => {
 };
 
 exports.findOne = (req, res) => {
-    const name = req.body.name;
+    const title = req.body.title;
 
-    Movie.findOne({ name: name })
+    Movie.findOne({ title: title })
     .then(movie => {
         if(!movie){
             res.status(400).send(

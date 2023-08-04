@@ -1,7 +1,18 @@
+const { generateAccessToken } = require('../config/authenticator');
 const User = require('../models/user.model')
 const bcrypt = require('bcrypt');
 
-exports.create = (req, res) => {
+exports.register = async (req, res) => {
+  if (!req.body.firstName) {
+    return res.status(400).send({
+      message: "First name cannot be empty"
+    });
+  }
+  if (!req.body.lastName) {
+    return res.status(400).send({
+      message: "Last name name cannot be empty"
+    });
+  }
   if (!req.body.email) {
     return res.status(400).send({
       message: "Email cannot be empty"
@@ -12,6 +23,7 @@ exports.create = (req, res) => {
       message: "User name cannot be empty"
     });
   }
+  
   if (!req.body.password) {
     return res.status(400).send({
       message: "Password cannot be empty"
@@ -19,19 +31,26 @@ exports.create = (req, res) => {
   }
 
   const user = new User({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
     email: req.body.email,
     userName: req.body.userName,
     password:  bcrypt.hashSync(req.body.password, 10)
   });
 
-  user.save()
+  await user.save()
     .then(() => {
-      res.send(`
-        <script>
-          alert('Sign-up successful! You can now log in.');
-          window.location.href = '/login';
-        </script>
-      `);
+      console.log('Userr:', user);
+      console.log("email: ", email)
+      console.log("password: ", password)
+      
+      const authToken = generateAccessToken(email)
+
+      res.send({
+        message: errorMessage,
+        user: user,
+        token: authToken
+      });
     })
     .catch(error => {
         let errorMessage = "An error occurred";
@@ -43,48 +62,55 @@ exports.create = (req, res) => {
             errorMessage = "Username already exists. Please choose a different username.";
           }
         }
-        res.send(`
-          <script>
-            alert('Sign-up failed. ${errorMessage}');
-            window.location.href = '/signup';
-          </script>
-        `);
+        return res.status(400).json({
+          message: errorMessage,
+          error: error,
+        });
       });
+};
+
+
+exports.login = async (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  
+  try {
+    const user = await User.findOne({ email: email });   
+    if (!user) {
+      return res.status(400).json({
+        message: "User not found",
+      });
+    }
+    const passwordMatch = await bcrypt.compare(password, user.password);    
+    if (passwordMatch) {
+      const authToken = generateAccessToken(email)
+      // return ({ message: "Login Successful" });
+      res.send({
+        message: "Login Successful",
+        user: user,
+        token: authToken
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({
+      message: 'Something went wrong',
+      error: err,
+    });
+  }
 };
 
 
 exports.findOne = async (req, res) => {
   const username = req.body.username;
-  const password = req.body.password;
   try {
     const user = await User.findOne({ userName: username });
     console.log('User:', user);
     if (!user) {
-      return res.send(`
-        <script>
-          alert('The user does not exist. Try again.');
-          window.location.href = '/login';
-        </script>
-      `);
-    }
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (passwordMatch) {
-      req.session.user = { username: username };
-      return res.send(`
-        <script>
-          alert('Login successful.');
-          window.location.href = '/dashboard';
-        </script>
-      `);
+      return ({ message: "User not found" });
     } else {
-      return res.send(`
-        <script>
-          alert('Wrong password, try again.');
-          window.location.href = '/login';
-        </script>
-      `);
-    }
+      return user
+    }    
   } catch (err) {
     console.log(err);
     return res.status(500).json({
@@ -93,7 +119,6 @@ exports.findOne = async (req, res) => {
     });
   }
 };
-
   
 
 exports.findAll = (req, res) =>{
