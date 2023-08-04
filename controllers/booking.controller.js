@@ -1,4 +1,5 @@
 const Booking = require('../models/booking.model');
+const Movie = require('../models/movie.model');
 
 exports.findAll = async (req, res) => {
   try {
@@ -65,18 +66,28 @@ exports.delete = async (req, res) => {
 };
 
 exports.getBookingsByMovieTitle = async (req, res) => {
-    try {
-      const { title } = req.query;
-      const bookings = await Booking.find({
-        'movie.title': { $regex: title, $options: 'i' },
-      });
-  
-      if (bookings.length === 0) {
-        return res.status(404).json({ message: 'No bookings found for this movie title' });
-      }
-  
-      res.json(bookings);
-    } catch (error) {
-      res.status(500).json({ error: 'Internal server error' });
+  try {
+    const { title } = req.query;
+
+    const movie = await Movie.findOne({ title });
+    if (!movie) {
+      return res.status(404).json({ message: 'Movie not found' });
     }
-  };
+
+    const movieId = movie._id; // Extract the ObjectId from the movie
+
+    // Now, query bookings using the movieId
+    const bookings = await Booking.find({
+      'movie': movieId,
+    });
+
+    if (bookings.length === 0) {
+      return res.status(404).json({ message: 'No bookings found for this movie title' });
+    }
+
+    res.json(bookings);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
