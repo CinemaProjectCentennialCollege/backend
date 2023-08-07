@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const axios = require('axios');
+const GOOGLE_API_KEY = 'AIzaSyAdiixz8wMF2AqXA6___4CIDY46POZ3It0';
+const SEARCH_ENGINE_ID = '72999ac01925c40d6';
 
 const Movie = require('../models/movie.model')
 
@@ -170,6 +173,31 @@ exports.findById = (req, res) => {
       res.status(500).json({ message: 'Something went wrong', error: err });
     });
 };
+
+exports.getMoviePosterURL = async (req, res)=>{
+  const movieName = req.query.movieName;
+
+  try {
+    const response = await axios.get('https://www.googleapis.com/customsearch/v1', {
+      params: {
+        key: GOOGLE_API_KEY,
+        cx: SEARCH_ENGINE_ID,
+        q: `${movieName} poster`,
+        searchType: 'image',
+      },
+    }
+    );
+    const firstResult = response.data.items[0];
+    const posterLink = firstResult.link;
+
+    res.json({ posterLink });
+    console.log('API Response:', posterLink);
+  } catch (error) {
+      console.error('Error fetching movie poster:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+
+}
 
 
 exports.findBySlug = (req, res) => {

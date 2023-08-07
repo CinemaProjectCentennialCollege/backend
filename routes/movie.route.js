@@ -1,7 +1,8 @@
 module.exports = (app)=>{
     const movie = require('../controllers/movie.controller');
-  
+    
     app.post('/movies', movie.create);
+    app.get('/getPoster', movie.getMoviePosterURL);
     app.get('/movies', movie.findAll);
     app.get('/movies/popular', movie.findPopular);
     app.get('/movies/:slug', movie.getMovieByIdOrSlug);
