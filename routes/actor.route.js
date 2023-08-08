@@ -3,7 +3,7 @@ module.exports = (app)=>{
   
     app.post('/actors', actor.create);
     app.get('/actors', actor.findAll);
-    app.get('/getActorPhoto', actor.getActorPhotoURL);
+    app.get('/actors/get-photo', actor.getActorPhotoURL);
     app.get('/actors/:id', actor.findById);
     app.put('/actors/:id', actor.update);
     app.delete('/actors/:id', actor.delete);

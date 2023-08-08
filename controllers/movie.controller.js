@@ -210,6 +210,7 @@ exports.getMoviePosterURL = async (req, res)=>{
     const posterLink = firstResult.link;
 
     res.json({ posterLink });
+    // res.json(posterLink);
     console.log('API Response:', posterLink);
   } catch (error) {
       console.error('Error fetching movie poster:', error);
