@@ -123,8 +123,27 @@ exports.getMovieByIdOrSlug = (req, res) => {
         localField: 'tmdb_id',
         foreignField: 'tmdbId',
         as: 'casts'
-      }
+      },
     },
+    {
+      $lookup: {
+        from: 'bookings', // Name of the casts collection
+        localField: '_id',
+        foreignField: 'movie',
+        as: 'bookings'
+      },
+    },
+
+    // {
+    //   $match: {
+    //     'booking.date': targetDate // Filter by the desired date
+    //   }
+    // },
+    // {
+    //   $unwind: '$booking'
+    // }
+
+
     // {
     //   $project: {
     //     _id: 1,

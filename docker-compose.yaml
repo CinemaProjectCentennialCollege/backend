@@ -3,7 +3,7 @@
 # dcr.svc.obaa.cloud/cinerama-backend:v0.1
 # ---
 # Docker image build command
-# docker build -f Dockerfile -t dcr.svc.obaa.cloud/cinerama-backend:v0.1 .
+# docker build -f Dockerfile -t dcr.svc.obaa.cloud/cinerama-backend:v0.2 .
 # ---
 version: '3.7'
 
@@ -12,7 +12,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: dcr.svc.obaa.cloud/cinerama-backend:v0.1
+    image: dcr.svc.obaa.cloud/cinerama-backend:v0.2
     container_name: cinerama-backend
     volumes:
       - ./:/app/
