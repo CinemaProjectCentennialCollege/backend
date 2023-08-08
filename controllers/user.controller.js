@@ -92,6 +92,12 @@ exports.login = async (req, res) => {
         token: authToken
       });
     }
+    else {
+      return res.status(400).json({
+        message: "Your Password is Incorrect",
+      }
+      )
+    }
   } catch (err) {
     console.log(err);
     return res.status(400).json({

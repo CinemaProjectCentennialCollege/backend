@@ -1,4 +1,32 @@
 const Actor = require('../models/actor.model')
+const axios = require('axios');
+const GOOGLE_API_KEY = 'AIzaSyAdiixz8wMF2AqXA6___4CIDY46POZ3It0';
+const SEARCH_ENGINE_ID = '72999ac01925c40d6';
+
+exports.getActorPhotoURL = async (req, res)=>{
+  const actorName = req.query.actorName;
+
+  try {
+    const response = await axios.get('https://www.googleapis.com/customsearch/v1', {
+      params: {
+        key: GOOGLE_API_KEY,
+        cx: SEARCH_ENGINE_ID,
+        q: `${actorName} photo`,
+        searchType: 'image',
+      },
+    }
+    );
+    const firstResult = response.data.items[0];
+    const posterLink = firstResult.link;
+
+    res.json({ posterLink });
+    console.log('API Response:', posterLink);
+  } catch (error) {
+      console.error('Error fetching actor photo:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+
+}
 
 exports.findAll = (req, res) =>{
   const pageOptions = {
